@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chocolate Advent Calendar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 1.5rem;
+      max-width: 320px;
+      margin: 2rem auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    h2 {
+      font-size: 1.25rem;
+      margin: 0.5rem 0;
+    }
+    .small {
+      font-size: 0.85rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🎄 Chocolate Advent Calendar 🎄</h1>
+    <p class="small" id="date-info"></p>
+    <h2 id="message"></h2>
+    <p id="details"></p>
+  </div>
+
+  <script>
+    // 1) Configure your Advent window (e.g. 1–24 December 2025)
+    const adventStart = new Date("2025-11-01T00:00:00");
+    const adventEnd   = new Date("2025-11-25T00:00:00"); // exclusive (stops at 24th)
+
+    // 2) Paste your precomputed schedule here:
+    // Example (replace with output from Python script):
+    const schedule = [
+      ["Dark", "Hazelnut"],
+      ["Milk", "Mint"],
+      ["Caramel", "Almond"],
+      ["Dark", "Milk"],
+      ["Hazelnut", "Caramel"],
+      ["Mint", "Almond"],
+      ["Dark", "Caramel"],
+      ["Milk", "Hazelnut"],
+      ["Mint", "Dark"],
+      ["Almond", "Milk"],
+      ["Hazelnut", "Mint"],
+      ["Caramel", "Dark"],
+      ["Almond", "Hazelnut"],
+      ["Milk", "Caramel"],
+      ["Dark", "Almond"],
+      ["Mint", "Milk"],
+      ["Caramel", "Mint"],
+      ["Hazelnut", "Dark"],
+      ["Almond", "Caramel"],
+      ["Milk", "Dark"],
+      ["Mint", "Hazelnut"],
+      ["Caramel", "Milk"],
+      ["Dark", "Mint"],
+      ["Almond", "Hazelnut"]
+    ];
+
+    function floorDaysBetween(d1, d2) {
+      const msPerDay = 24 * 60 * 60 * 1000;
+      const utc1 = Date.UTC(d1.getFullYear(), d1.getMonth(), d1.getDate());
+      const utc2 = Date.UTC(d2.getFullYear(), d2.getMonth(), d2.getDate());
+      return Math.floor((utc2 - utc1) / msPerDay);
+    }
+
+    const today = new Date();
+    const dateInfoEl = document.getElementById("date-info");
+    const messageEl = document.getElementById("message");
+    const detailsEl = document.getElementById("details");
+
+    if (today < adventStart) {
+      dateInfoEl.textContent = today.toDateString();
+      messageEl.textContent = "The calendar has not started yet.";
+      detailsEl.textContent = "Come back on December 1st.";
+    } else if (today >= adventEnd) {
+      dateInfoEl.textContent = today.toDateString();
+      messageEl.textContent = "The calendar is finished!";
+      detailsEl.textContent = "You have eaten all the chocolates. 🎁";
+    } else {
+      const dayIndex = floorDaysBetween(adventStart, today); // 0–23
+      const dayNumber = dayIndex + 1;
+      const [c1, c2] = schedule[dayIndex];
+
+      dateInfoEl.textContent = `Today is Day ${dayNumber} of your Advent calendar.`;
+      messageEl.textContent = `Today, enjoy these two chocolates:`;
+      detailsEl.textContent = `${c1} and ${c2}`;
+    }
+  </script>
+</body>
+</html>
