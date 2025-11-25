@@ -5,73 +5,180 @@
   <title>Chocolate Advent Calendar</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
+    :root {
+      --christmas-red: #b71c1c;
+      --christmas-green: #1b5e20;
+      --gold: #d4af37;
+    }
+
     body {
       font-family: system-ui, sans-serif;
       text-align: center;
       padding: 2rem;
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top left, #ffebee 0, #fce4ec 35%, #e8f5e9 75%, #c8e6c9 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
+
     .card {
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      padding: 1.5rem;
-      max-width: 320px;
-      margin: 2rem auto;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      background: rgba(255, 255, 255, 0.95);
+      border: 2px solid var(--christmas-red);
+      border-radius: 16px;
+      padding: 1.75rem 1.5rem 2rem;
+      max-width: 380px;
+      width: 100%;
+      margin: 0 auto;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+      position: relative;
+      overflow: hidden;
     }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -10%;
+      width: 120%;
+      height: 8px;
+      background: linear-gradient(90deg, var(--christmas-red), var(--gold), var(--christmas-green));
+    }
+
     h1 {
-      font-size: 1.5rem;
-      margin-bottom: 0.5rem;
+      font-size: 1.6rem;
+      margin-bottom: 0.75rem;
+      color: var(--christmas-red);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
+
+    h1 .title-line-small {
+      display: block;
+      font-size: 1.3rem;
+    }
+
+    h1 .title-line-main {
+      display: block;
+      font-size: 1.9rem;
+      margin: 0.2rem 0;
+      color: var(--christmas-red);
+    }
+
+    h1 .title-main-row {
+      display: block;
+      line-height: 1.2;
+    }
+
     h2 {
-      font-size: 1.25rem;
-      margin: 0.5rem 0;
+      font-size: 1.2rem;
+      margin: 0.75rem 0 0.25rem;
+      color: var(--christmas-green);
     }
+
     .small {
       font-size: 0.85rem;
       color: #555;
+    }
+
+    .chocolates {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .choc {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 120px;
+      padding: 0.5rem;
+      border-radius: 12px;
+      background: #fafafa;
+      border: 1px solid rgba(0,0,0,0.05);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+    }
+
+    .choc img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 2px solid var(--christmas-green);
+      margin-bottom: 0.5rem;
+      background: #fff;
+    }
+
+    .choc span {
+      font-size: 0.9rem;
+      color: #333;
     }
   </style>
 </head>
 <body>
   <div class="card">
-    <h1>🎄 Chocolate Advent Calendar 🎄</h1>
+    <h1>
+      <span class="title-line-small">❤️ 🎁 🍫 🎄 🎅 🍫 🎁 ❤️</span><br>
+
+      <span class="title-line-main">
+        <span class="title-main-row">❤️ Sumika's ❤️</span>
+        <span class="title-main-row">🎄 Advent 🎄</span>
+        <span class="title-main-row">🍬 Calendar 🍬</span>
+      </span><br>
+
+      <span class="title-line-small">❤️ 🎁 🍫 🎅 🎄 🍫 🎁 ❤️</span>
+    </h1>
+
     <p class="small" id="date-info"></p>
     <h2 id="message"></h2>
-    <p id="details"></p>
+    <div class="chocolates" id="chocolate-container"></div>
   </div>
 
   <script>
-    // 1) Configure your Advent window (e.g. 1–24 December 2025)
-    const adventStart = new Date("2025-11-04T00:00:00");
-    const adventEnd   = new Date("2025-11-29T00:00:00"); // exclusive (stops at 24th)
+    // 1) Advent window (25 days)
+    const adventStart = new Date("2025-12-01T00:00:00");
+    const adventEnd   = new Date("2025-12-26T00:00:00"); // exclusive (25 days)
 
-    // 2) Paste your precomputed schedule here:
-    // Example (replace with output from Python script):
+    // 2) Chocolate metadata (with Santa)
+    const chocolates = {
+      Dark_Milk:          { name: "Milka Dark Milk",                  imageUrl: "Dark milk.png" },
+      Alpen_Milk:         { name: "Milka Alpen Milk",                 imageUrl: "Aplen Milk.png" },
+      Noisette_Hazelnut:  { name: "Milka Noisette Hazelnut",          imageUrl: "Noisette hazelnut.png" },
+      Lebkuchen:          { name: "Milka Lebkuchen",                  imageUrl: "Lebkuchen.png" },
+      Marzipan:           { name: "Milka Marzipan",                   imageUrl: "Marzipan.png" },
+      Nougat_karamell:    { name: "Milka Nougat mit Karamellstücken", imageUrl: "Nougat Creme mit Karamellstücken.png" },
+      Santa_Chocolate:    { name: "Milka Santa Biscoff 🎅",           imageUrl: "Biscoff Santa.png" }
+    };
+
+    // 3) Precomputed schedule with Day 25 added
     const schedule = [
-      ["Dark", "Hazelnut"],
-      ["Milk", "Mint"],
-      ["Caramel", "Almond"],
-      ["Dark", "Milk"],
-      ["Hazelnut", "Caramel"],
-      ["Mint", "Almond"],
-      ["Dark", "Caramel"],
-      ["Milk", "Hazelnut"],
-      ["Mint", "Dark"],
-      ["Almond", "Milk"],
-      ["Hazelnut", "Mint"],
-      ["Caramel", "Dark"],
-      ["Almond", "Hazelnut"],
-      ["Milk", "Caramel"],
-      ["Dark", "Almond"],
-      ["Mint", "Milk"],
-      ["Caramel", "Mint"],
-      ["Hazelnut", "Dark"],
-      ["Almond", "Caramel"],
-      ["Milk", "Dark"],
-      ["Mint", "Hazelnut"],
-      ["Caramel", "Milk"],
-      ["Dark", "Mint"],
-      ["Almond", "Hazelnut"]
+      ["Dark_Milk",         "Lebkuchen"],          
+      ["Marzipan",          "Nougat_karamell"],    
+      ["Dark_Milk",         "Noisette_Hazelnut"],  
+      ["Lebkuchen",         "Marzipan"],           
+      ["Dark_Milk",         "Alpen_Milk"],         
+      ["Lebkuchen",         "Nougat_karamell"],    
+      ["Dark_Milk",         "Alpen_Milk"],         
+      ["Marzipan",          "Nougat_karamell"],    
+      ["Noisette_Hazelnut", "Lebkuchen"],          
+      ["Dark_Milk",         "Alpen_Milk"],         
+      ["Lebkuchen",         "Marzipan"],           
+      ["Alpen_Milk",        "Nougat_karamell"],    
+      ["Noisette_Hazelnut", "Marzipan"],           
+      ["Dark_Milk",         "Alpen_Milk"],         
+      ["Noisette_Hazelnut", "Marzipan"],           
+      ["Dark_Milk",         "Lebkuchen"],          
+      ["Alpen_Milk",        "Noisette_Hazelnut"],  
+      ["Marzipan",          "Nougat_karamell"],    
+      ["Noisette_Hazelnut", "Lebkuchen"],          
+      ["Alpen_Milk",        "Nougat_karamell"],    
+      ["Dark_Milk",         "Noisette_Hazelnut"],  
+      ["Lebkuchen",         "Nougat_karamell"],    
+      ["Alpen_Milk",        "Noisette_Hazelnut"],  
+      ["Marzipan",          "Nougat_karamell"],    
+      ["Santa_Chocolate"]                          // 🎅 Day 25
     ];
 
     function floorDaysBetween(d1, d2) {
@@ -84,24 +191,82 @@
     const today = new Date();
     const dateInfoEl = document.getElementById("date-info");
     const messageEl = document.getElementById("message");
-    const detailsEl = document.getElementById("details");
+    const containerEl = document.getElementById("chocolate-container");
 
     if (today < adventStart) {
       dateInfoEl.textContent = today.toDateString();
-      messageEl.textContent = "The calendar has not started yet.";
-      detailsEl.textContent = "Come back on December 1st.";
+      messageEl.textContent = "The calendar has not started yet. Come back on the first day of your calendar. 🤗";
     } else if (today >= adventEnd) {
       dateInfoEl.textContent = today.toDateString();
-      messageEl.textContent = "The calendar is finished!";
-      detailsEl.textContent = "You have eaten all the chocolates. 🎁";
+      messageEl.textContent = "The calendar is finished! You have eaten all the chocolates. 🤭 🎁";
     } else {
-      const dayIndex = floorDaysBetween(adventStart, today); // 0–23
+      const dayIndex = floorDaysBetween(adventStart, today);
       const dayNumber = dayIndex + 1;
-      const [c1, c2] = schedule[dayIndex];
+      const todaysChocolates = schedule[dayIndex];
 
-      dateInfoEl.textContent = `Today is Day ${dayNumber} of your Advent calendar.`;
-      messageEl.textContent = `Today, enjoy these two chocolates:`;
-      detailsEl.textContent = `${c1} and ${c2}`;
+      // New text for the day line
+      dateInfoEl.textContent = `Day ${dayNumber} of your advent.`;
+
+      // Track if today's chocolates were already opened on this device
+      const STORAGE_KEY = "sumika_advent_open_state_v1";
+      let state = null;
+      try {
+        state = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      } catch (e) {
+        state = null;
+      }
+      if (!state) {
+        state = { dayNumber: null };
+      }
+
+      const alreadyOpenedToday = state.dayNumber === dayNumber;
+      const isSantaDay = todaysChocolates.length === 1; // Day 25
+
+      if (alreadyOpenedToday) {
+        if (isSantaDay) {
+          // Last day: always nice, no greedy message
+          messageEl.textContent = "🎄 Merry Christmas! Your special Santa chocolate 🎅";
+        } else {
+          // Days 1–24: greedy warning on second/later open
+          messageEl.textContent = "Today's chocolates are in your stomach. 😗 No more today. 😝 🤫";
+        }
+      } else {
+        // First open today
+        if (isSantaDay) {
+          messageEl.textContent = "🎄 Merry Christmas! Your special Santa chocolate 🎅";
+        } else {
+          // New regular-day message
+          messageEl.textContent = "Today's chocolate surprise by me for you 😘";
+        }
+
+        // Save that this day has been opened
+        const newState = { dayNumber };
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
+        } catch (e) {
+          // Ignore storage errors (e.g. private mode)
+        }
+      }
+
+      // Always show today's chocolates (first or later open)
+      todaysChocolates.forEach(id => {
+        const choc = chocolates[id];
+        if (!choc) return;
+
+        const div = document.createElement("div");
+        div.className = "choc";
+
+        const img = document.createElement("img");
+        img.src = choc.imageUrl;
+        img.alt = choc.name;
+
+        const label = document.createElement("span");
+        label.textContent = choc.name;
+
+        div.appendChild(img);
+        div.appendChild(label);
+        containerEl.appendChild(div);
+      });
     }
   </script>
 </body>
